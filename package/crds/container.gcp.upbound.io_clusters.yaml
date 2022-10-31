@@ -89,6 +89,32 @@ spec:
                             - disabled
                             type: object
                           type: array
+                        dnsCacheConfig:
+                          description: . The status of the NodeLocal DNSCache addon.
+                            It is disabled by default. Set enabled = true to enable.
+                          items:
+                            properties:
+                              enabled:
+                                description: Enables vertical pod autoscaling
+                                type: boolean
+                            required:
+                            - enabled
+                            type: object
+                          type: array
+                        gcePersistentDiskCsiDriverConfig:
+                          description: . Whether this cluster should enable the Google
+                            Compute Engine Persistent Disk Container Storage Interface
+                            (CSI) Driver. Defaults to disabled; set enabled = true
+                            to enabled.
+                          items:
+                            properties:
+                              enabled:
+                                description: Enables vertical pod autoscaling
+                                type: boolean
+                            required:
+                            - enabled
+                            type: object
+                          type: array
                         gcpFilestoreCsiDriverConfig:
                           description: The status of the Filestore CSI driver addon,
                             which allows the usage of filestore instance as volumes.
@@ -173,6 +199,24 @@ spec:
                       - securityGroup
                       type: object
                     type: array
+                  binaryAuthorization:
+                    description: Configuration options for the Binary Authorization
+                      feature. Structure is documented below.
+                    items:
+                      properties:
+                        enabled:
+                          description: (DEPRECATED) Enable Binary Authorization for
+                            this cluster. Deprecated in favor of evaluation_mode.
+                          type: boolean
+                        evaluationMode:
+                          description: Mode of operation for Binary Authorization
+                            policy evaluation. Valid values are DISABLED and PROJECT_SINGLETON_POLICY_ENFORCE.
+                            PROJECT_SINGLETON_POLICY_ENFORCE is functionally equivalent
+                            to the deprecated enable_binary_authorization parameter
+                            being set to true.
+                          type: string
+                      type: object
+                    type: array
                   clusterAutoscaling:
                     description: Per-cluster configuration of Node Auto-Provisioning
                       with Cluster Autoscaler to automatically adjust the size of
@@ -187,6 +231,13 @@ spec:
                             NAP. Structure is documented below.
                           items:
                             properties:
+                              bootDiskKmsKey:
+                                description: 'The Customer Managed Encryption Key
+                                  used to encrypt the boot disk attached to each node
+                                  in the node pool. This should be of the form projects/[KEY_PROJECT_ID]/locations/[LOCATION]/keyRings/[RING_NAME]/cryptoKeys/[KEY_NAME].
+                                  For more information about protecting resources
+                                  with Cloud KMS Keys please see: https://cloud.google.com/compute/docs/disks/customer-managed-encryption'
+                                type: string
                               imageType:
                                 description: The image type to use for this node.
                                   Note that changing the image type will delete and
@@ -334,9 +385,9 @@ spec:
                       features.
                     type: boolean
                   enableBinaryAuthorization:
-                    description: Enable Binary Authorization for this cluster. If
-                      enabled, all container images will be validated by Google Binary
-                      Authorization.
+                    description: (DEPRECATED) Enable Binary Authorization for this
+                      cluster. If enabled, all container images will be validated
+                      by Google Binary Authorization. Deprecated in favor of binary_authorization.
                     type: boolean
                   enableIntranodeVisibility:
                     description: Whether Intra-node visibility is enabled for this
@@ -555,6 +606,19 @@ spec:
                           type: array
                       type: object
                     type: array
+                  meshCertificates:
+                    description: Structure is documented below.
+                    items:
+                      properties:
+                        enableCertificates:
+                          description: Controls the issuance of workload mTLS certificates.
+                            It is enabled by default. Workload Identity is required,
+                            see workload_config.
+                          type: boolean
+                      required:
+                      - enableCertificates
+                      type: object
+                    type: array
                   minMasterVersion:
                     description: The minimum version of the master. GKE will auto-update
                       the master to new versions, so this does not guarantee the current
@@ -571,9 +635,11 @@ spec:
                     items:
                       properties:
                         enableComponents:
-                          description: The GKE components exposing logs. SYSTEM_COMPONENTS
-                            and in beta provider, both SYSTEM_COMPONENTS and WORKLOADS
-                            are supported.
+                          description: 'The GKE components exposing metrics. Supported
+                            values include: SYSTEM_COMPONENTS, APISERVER, CONTROLLER_MANAGER,
+                            and SCHEDULER. In beta provider, WORKLOADS is supported
+                            on top of those 4 values. (WORKLOADS is deprecated and
+                            removed in GKE 1.24.)'
                           items:
                             type: string
                           type: array
@@ -750,6 +816,22 @@ spec:
                                   Valid values are described in the NVIDIA mig user
                                   guide.
                                 type: string
+                              gpuSharingConfig:
+                                description: Configuration for GPU sharing. Structure
+                                  is documented below.
+                                items:
+                                  properties:
+                                    gpuSharingStrategy:
+                                      description: 'The type of GPU sharing strategy
+                                        to enable on the GPU node. Accepted values
+                                        are:'
+                                      type: string
+                                    maxSharedClientsPerGpu:
+                                      description: The maximum number of containers
+                                        that can share a GPU.
+                                      type: number
+                                  type: object
+                                type: array
                               type:
                                 description: The accelerator type resource to expose
                                   to this instance. E.g. nvidia-tesla-k80.
@@ -830,6 +912,28 @@ spec:
                             underlying node VMs are preemptible. See the official
                             documentation for more information. Defaults to false.
                           type: boolean
+                        reservationAffinity:
+                          description: The configuration of the desired reservation
+                            which instances could take capacity from. Structure is
+                            documented below.
+                          items:
+                            properties:
+                              consumeReservationType:
+                                description: 'The type of reservation consumption
+                                  Accepted values are:'
+                                type: string
+                              key:
+                                description: Key for taint.
+                                type: string
+                              values:
+                                description: name"
+                                items:
+                                  type: string
+                                type: array
+                            required:
+                            - consumeReservationType
+                            type: object
+                          type: array
                         serviceAccount:
                           description: The service account to be used by the Node
                             VMs. If not specified, the "default" service account is
@@ -928,6 +1032,11 @@ spec:
                                 type: boolean
                             type: object
                           type: array
+                        spot:
+                          description: A boolean that represents whether the underlying
+                            node VMs are spot. See the official documentation for
+                            more information. Defaults to false.
+                          type: boolean
                         tags:
                           description: The list of instance tags applied to all nodes.
                             Tags are used to identify valid sources or targets for
@@ -990,6 +1099,52 @@ spec:
                       pool. To update nodes in other node pools, use the version attribute
                       on the node pool.
                     type: string
+                  notificationConfig:
+                    description: Configuration for the cluster upgrade notifications
+                      feature. Structure is documented below.
+                    items:
+                      properties:
+                        pubsub:
+                          description: The pubsub config for the cluster's upgrade
+                            notifications.
+                          items:
+                            properties:
+                              enabled:
+                                description: Whether or not the notification config
+                                  is enabled
+                                type: boolean
+                              filter:
+                                description: Choose what type of notifications you
+                                  want to receive. If no filters are applied, you'll
+                                  receive all notification types. Structure is documented
+                                  below.
+                                items:
+                                  properties:
+                                    eventType:
+                                      description: Can be used to filter what notifications
+                                        are sent. Accepted values are UPGRADE_AVAILABLE_EVENT,
+                                        UPGRADE_EVENT and SECURITY_BULLETIN_EVENT.
+                                        See Filtering notifications for more details.
+                                      items:
+                                        type: string
+                                      type: array
+                                  required:
+                                  - eventType
+                                  type: object
+                                type: array
+                              topic:
+                                description: 'The pubsub topic to push upgrade notifications
+                                  to. Must be in the same project as the cluster.
+                                  Must be in the format: projects/{project}/topics/{topic}.'
+                                type: string
+                            required:
+                            - enabled
+                            type: object
+                          type: array
+                      required:
+                      - pubsub
+                      type: object
+                    type: array
                   privateClusterConfig:
                     description: Configuration for private clusters, clusters with
                       private nodes. Structure is documented below.
@@ -1106,6 +1261,18 @@ spec:
                           type: boolean
                       required:
                       - bigqueryDestination
+                      type: object
+                    type: array
+                  serviceExternalIpsConfig:
+                    description: Structure is documented below.
+                    items:
+                      properties:
+                        enabled:
+                          description: Controls whether external ips specified by
+                            a service will be allowed. It is enabled by default.
+                          type: boolean
+                      required:
+                      - enabled
                       type: object
                     type: array
                   subnetwork:
@@ -1455,9 +1622,15 @@ spec:
                         autoscaling:
                           items:
                             properties:
+                              locationPolicy:
+                                type: string
                               maxNodeCount:
                                 type: number
                               minNodeCount:
+                                type: number
+                              totalMaxNodeCount:
+                                type: number
+                              totalMinNodeCount:
                                 type: number
                             type: object
                           type: array
@@ -1518,17 +1691,10 @@ spec:
                                   If unspecified, the default disk type is 'pd-standard'
                                 type: string
                               gcfsConfig:
-                                description: Parameters for the Google Container Filesystem
-                                  (GCFS). If unspecified, GCFS will not be enabled
-                                  on the node pool. When enabling this feature you
-                                  must specify image_type = "COS_CONTAINERD" and node_version
-                                  from GKE versions 1.19 or later to use it. For GKE
-                                  versions 1.19, 1.20, and 1.21, the recommended minimum
-                                  node_version would be 1.19.15-gke.1300, 1.20.11-gke.1300,
-                                  and 1.21.5-gke.1300 respectively. A machine_type
-                                  that has more than 16 GiB of memory is also recommended.
-                                  GCFS must be enabled in order to use image streaming.
-                                  Structure is documented below.
+                                description: The default Google Container Filesystem
+                                  (GCFS) configuration at the cluster level. e.g.
+                                  enable image streaming across all the node pools
+                                  within the cluster. Structure is documented below.
                                 items:
                                   properties:
                                     enabled:
@@ -1551,6 +1717,22 @@ spec:
                                         the GPU. Valid values are described in the
                                         NVIDIA mig user guide.
                                       type: string
+                                    gpuSharingConfig:
+                                      description: Configuration for GPU sharing.
+                                        Structure is documented below.
+                                      items:
+                                        properties:
+                                          gpuSharingStrategy:
+                                            description: 'The type of GPU sharing
+                                              strategy to enable on the GPU node.
+                                              Accepted values are:'
+                                            type: string
+                                          maxSharedClientsPerGpu:
+                                            description: The maximum number of containers
+                                              that can share a GPU.
+                                            type: number
+                                        type: object
+                                      type: array
                                     type:
                                       description: The accelerator type resource to
                                         expose to this instance. E.g. nvidia-tesla-k80.
@@ -1632,6 +1814,26 @@ spec:
                                   the official documentation for more information.
                                   Defaults to false.
                                 type: boolean
+                              reservationAffinity:
+                                description: The configuration of the desired reservation
+                                  which instances could take capacity from. Structure
+                                  is documented below.
+                                items:
+                                  properties:
+                                    consumeReservationType:
+                                      description: 'The type of reservation consumption
+                                        Accepted values are:'
+                                      type: string
+                                    key:
+                                      description: Key for taint.
+                                      type: string
+                                    values:
+                                      description: name"
+                                      items:
+                                        type: string
+                                      type: array
+                                  type: object
+                                type: array
                               serviceAccount:
                                 description: The service account to be used by the
                                   Node VMs. If not specified, the "default" service
@@ -1652,10 +1854,14 @@ spec:
                                       type: boolean
                                   type: object
                                 type: array
+                              spot:
+                                description: A boolean that represents whether the
+                                  underlying node VMs are spot. See the official documentation
+                                  for more information. Defaults to false.
+                                type: boolean
                               tags:
-                                description: The list of instance tags applied to
-                                  all nodes. Tags are used to identify valid sources
-                                  or targets for network firewalls.
+                                description: List of network tags applied to auto-provisioned
+                                  node pools.
                                 items:
                                   type: string
                                 type: array

@@ -351,6 +351,9 @@ type InstanceFromTemplateSchedulingParameters struct {
 	AutomaticRestart *bool `json:"automaticRestart,omitempty" tf:"automatic_restart,omitempty"`
 
 	// +kubebuilder:validation:Optional
+	InstanceTerminationAction *string `json:"instanceTerminationAction,omitempty" tf:"instance_termination_action,omitempty"`
+
+	// +kubebuilder:validation:Optional
 	MinNodeCpus *float64 `json:"minNodeCpus,omitempty" tf:"min_node_cpus,omitempty"`
 
 	// +kubebuilder:validation:Optional

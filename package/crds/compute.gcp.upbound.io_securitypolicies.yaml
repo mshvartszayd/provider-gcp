@@ -64,6 +64,64 @@ spec:
                 type: string
               forProvider:
                 properties:
+                  adaptiveProtectionConfig:
+                    description: Configuration for Google Cloud Armor Adaptive Protection.
+                      Structure is documented below.
+                    items:
+                      properties:
+                        layer7DdosDefenseConfig:
+                          description: Configuration for Google Cloud Armor Adaptive
+                            Protection Layer 7 DDoS Defense. Structure is documented
+                            below.
+                          items:
+                            properties:
+                              enable:
+                                description: If set to true, enables CAAP for L7 DDoS
+                                  detection.
+                                type: boolean
+                              ruleVisibility:
+                                description: 'Rule visibility can be one of the following:
+                                  STANDARD - opaque rules. (default) PREMIUM - transparent
+                                  rules.'
+                                type: string
+                            type: object
+                          type: array
+                      type: object
+                    type: array
+                  advancedOptionsConfig:
+                    description: Advanced Configuration Options. Structure is documented
+                      below.
+                    items:
+                      properties:
+                        jsonCustomConfig:
+                          description: Custom configuration to apply the JSON parsing.
+                            Only applicable when json_parsing is set to STANDARD.
+                            Structure is documented below.
+                          items:
+                            properties:
+                              contentTypes:
+                                description: A list of custom Content-Type header
+                                  values to apply the JSON parsing. The format of
+                                  the Content-Type header values is defined in RFC
+                                  1341. When configuring a custom Content-Type header
+                                  value, only the type/subtype needs to be specified,
+                                  and the parameters should be excluded.
+                                items:
+                                  type: string
+                                type: array
+                            required:
+                            - contentTypes
+                            type: object
+                          type: array
+                        jsonParsing:
+                          description: Whether or not to JSON parse the payload body.
+                            Defaults to DISABLED.
+                          type: string
+                        logLevel:
+                          description: Log level to use. Defaults to NORMAL.
+                          type: string
+                      type: object
+                    type: array
                   description:
                     description: An optional description of this security policy.
                       Max size is 2048.
@@ -147,6 +205,122 @@ spec:
                             priority (lowest numerically) to lowest priority (highest
                             numerically) in order.
                           type: number
+                        rateLimitOptions:
+                          description: Must be specified if the action is "rate_based_ban"
+                            or "throttle". Cannot be specified for other actions.
+                            Structure is documented below.
+                          items:
+                            properties:
+                              banDurationSec:
+                                description: Can only be specified if the action for
+                                  the rule is "rate_based_ban". If specified, determines
+                                  the time (in seconds) the traffic will continue
+                                  to be banned by the rate limit after the rate falls
+                                  below the threshold.
+                                type: number
+                              banThreshold:
+                                description: Can only be specified if the action for
+                                  the rule is "rate_based_ban". If specified, the
+                                  key will be banned for the configured 'ban_duration_sec'
+                                  when the number of requests that exceed the 'rate_limit_threshold'
+                                  also exceed this 'ban_threshold'. Structure is documented
+                                  below.
+                                items:
+                                  properties:
+                                    count:
+                                      description: Number of HTTP(S) requests for
+                                        calculating the threshold.
+                                      type: number
+                                    intervalSec:
+                                      description: Interval over which the threshold
+                                        is computed.
+                                      type: number
+                                  required:
+                                  - count
+                                  - intervalSec
+                                  type: object
+                                type: array
+                              conformAction:
+                                description: Action to take for requests that are
+                                  under the configured rate limit threshold. Valid
+                                  option is "allow" only.
+                                type: string
+                              enforceOnKey:
+                                description: Determines the key to enforce the rate_limit_threshold
+                                  on. If not specified, defaults to "ALL".
+                                type: string
+                              enforceOnKeyName:
+                                description: 'Rate limit key name applicable only
+                                  for the following key types: HTTP_HEADER -- Name
+                                  of the HTTP header whose value is taken as the key
+                                  value. HTTP_COOKIE -- Name of the HTTP cookie whose
+                                  value is taken as the key value.'
+                                type: string
+                              exceedAction:
+                                description: When a request is denied, returns the
+                                  HTTP response code specified. Valid options are
+                                  "deny()" where valid values for status are 403,
+                                  404, 429, and 502.
+                                type: string
+                              exceedRedirectOptions:
+                                items:
+                                  properties:
+                                    target:
+                                      description: External redirection target when
+                                        "EXTERNAL_302" is set in 'type'.
+                                      type: string
+                                    type:
+                                      description: The type indicates the intended
+                                        use of the security policy. This field can
+                                        be set only at resource creation time.
+                                      type: string
+                                  required:
+                                  - type
+                                  type: object
+                                type: array
+                              rateLimitThreshold:
+                                description: Threshold at which to begin ratelimiting.
+                                  Structure is documented below.
+                                items:
+                                  properties:
+                                    count:
+                                      description: Number of HTTP(S) requests for
+                                        calculating the threshold.
+                                      type: number
+                                    intervalSec:
+                                      description: Interval over which the threshold
+                                        is computed.
+                                      type: number
+                                  required:
+                                  - count
+                                  - intervalSec
+                                  type: object
+                                type: array
+                            required:
+                            - conformAction
+                            - exceedAction
+                            - rateLimitThreshold
+                            type: object
+                          type: array
+                        redirectOptions:
+                          description: Can be specified if the action is "redirect".
+                            Cannot be specified for other actions. Structure is documented
+                            below.
+                          items:
+                            properties:
+                              target:
+                                description: External redirection target when "EXTERNAL_302"
+                                  is set in 'type'.
+                                type: string
+                              type:
+                                description: The type indicates the intended use of
+                                  the security policy. This field can be set only
+                                  at resource creation time.
+                                type: string
+                            required:
+                            - type
+                            type: object
+                          type: array
                       required:
                       - action
                       - match
@@ -155,7 +329,7 @@ spec:
                     type: array
                   type:
                     description: The type indicates the intended use of the security
-                      policy.
+                      policy. This field can be set only at resource creation time.
                     type: string
                 type: object
               providerConfigRef:

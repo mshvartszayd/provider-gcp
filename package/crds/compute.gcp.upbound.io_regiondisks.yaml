@@ -82,6 +82,10 @@ spec:
                       documented below.
                     items:
                       properties:
+                        kmsKeyName:
+                          description: The name of the encryption key that is stored
+                            in Google Cloud KMS.
+                          type: string
                         rawKeySecretRef:
                           description: 'Specifies a 256-bit customer-supplied encryption
                             key, encoded in RFC 4648 base64 to either encrypt or decrypt

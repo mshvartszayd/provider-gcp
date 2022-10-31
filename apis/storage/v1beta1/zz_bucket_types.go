@@ -55,6 +55,10 @@ type BucketParameters struct {
 	// +kubebuilder:validation:Optional
 	Cors []CorsParameters `json:"cors,omitempty" tf:"cors,omitempty"`
 
+	// The bucket's custom location configuration, which specifies the individual regions that comprise a dual-region bucket. If the bucket is designated a single or multi-region, the parameters are empty. Structure is documented below.
+	// +kubebuilder:validation:Optional
+	CustomPlacementConfig []CustomPlacementConfigParameters `json:"customPlacementConfig,omitempty" tf:"custom_placement_config,omitempty"`
+
 	// Whether or not to automatically apply an eventBasedHold to new objects added to the bucket.
 	// +kubebuilder:validation:Optional
 	DefaultEventBasedHold *bool `json:"defaultEventBasedHold,omitempty" tf:"default_event_based_hold,omitempty"`
@@ -76,7 +80,7 @@ type BucketParameters struct {
 	// +kubebuilder:validation:Optional
 	LifecycleRule []LifecycleRuleParameters `json:"lifecycleRule,omitempty" tf:"lifecycle_rule,omitempty"`
 
-	// The GCS location
+	// The GCS location.
 	// +kubebuilder:validation:Required
 	Location *string `json:"location" tf:"location,omitempty"`
 
@@ -139,9 +143,17 @@ type ConditionParameters struct {
 	// +kubebuilder:validation:Optional
 	DaysSinceNoncurrentTime *float64 `json:"daysSinceNoncurrentTime,omitempty" tf:"days_since_noncurrent_time,omitempty"`
 
+	// One or more matching name prefixes to satisfy this condition.
+	// +kubebuilder:validation:Optional
+	MatchesPrefix []*string `json:"matchesPrefix,omitempty" tf:"matches_prefix,omitempty"`
+
 	// Storage Class of objects to satisfy this condition. Supported values include: STANDARD, MULTI_REGIONAL, REGIONAL, NEARLINE, COLDLINE, ARCHIVE, DURABLE_REDUCED_AVAILABILITY.
 	// +kubebuilder:validation:Optional
 	MatchesStorageClass []*string `json:"matchesStorageClass,omitempty" tf:"matches_storage_class,omitempty"`
+
+	// One or more matching name suffixes to satisfy this condition.
+	// +kubebuilder:validation:Optional
+	MatchesSuffix []*string `json:"matchesSuffix,omitempty" tf:"matches_suffix,omitempty"`
 
 	// Relevant only for versioned objects. The date in RFC 3339 (e.g. 2017-06-13) when the object became nonconcurrent.
 	// +kubebuilder:validation:Optional
@@ -176,6 +188,16 @@ type CorsParameters struct {
 	// The list of HTTP headers other than the simple response headers to give permission for the user-agent to share across domains.
 	// +kubebuilder:validation:Optional
 	ResponseHeader []*string `json:"responseHeader,omitempty" tf:"response_header,omitempty"`
+}
+
+type CustomPlacementConfigObservation struct {
+}
+
+type CustomPlacementConfigParameters struct {
+
+	// The list of individual regions that comprise a dual-region bucket. See Cloud Storage bucket locations for a list of acceptable regions. Note: If any of the data_locations changes, it will recreate the bucket.
+	// +kubebuilder:validation:Required
+	DataLocations []*string `json:"dataLocations" tf:"data_locations,omitempty"`
 }
 
 type EncryptionObservation struct {

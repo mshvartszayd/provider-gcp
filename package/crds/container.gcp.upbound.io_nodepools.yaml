@@ -70,17 +70,32 @@ spec:
                       is documented below.
                     items:
                       properties:
+                        locationPolicy:
+                          description: Location policy specifies the algorithm used
+                            when scaling-up the node pool. Location policy is supported
+                            only in 1.24.1+ clusters.
+                          type: string
                         maxNodeCount:
-                          description: Maximum number of nodes in the NodePool. Must
-                            be >= min_node_count.
+                          description: Maximum number of nodes per zone in the NodePool.
+                            Must be >= min_node_count. Cannot be used with total limits.
                           type: number
                         minNodeCount:
-                          description: Minimum number of nodes in the NodePool. Must
-                            be >=0 and <= max_node_count.
+                          description: Minimum number of nodes per zone in the NodePool.
+                            Must be >=0 and <= max_node_count. Cannot be used with
+                            total limits.
                           type: number
-                      required:
-                      - maxNodeCount
-                      - minNodeCount
+                        totalMaxNodeCount:
+                          description: Total maximum number of nodes in the NodePool.
+                            Must be >= total_min_node_count. Cannot be used with per
+                            zone limits. Total size limits are supported only in 1.24.1+
+                            clusters.
+                          type: number
+                        totalMinNodeCount:
+                          description: Total minimum number of nodes in the NodePool.
+                            Must be >=0 and <= total_max_node_count. Cannot be used
+                            with per zone limits. Total size limits are supported
+                            only in 1.24.1+ clusters.
+                          type: number
                       type: object
                     type: array
                   cluster:
@@ -220,6 +235,15 @@ spec:
                                 type: number
                               gpuPartitionSize:
                                 type: string
+                              gpuSharingConfig:
+                                items:
+                                  properties:
+                                    gpuSharingStrategy:
+                                      type: string
+                                    maxSharedClientsPerGpu:
+                                      type: number
+                                  type: object
+                                type: array
                               type:
                                 description: 'The type of the policy. Supports a single
                                   value: COMPACT. Specifying COMPACT placement policy
@@ -262,6 +286,21 @@ spec:
                           type: array
                         preemptible:
                           type: boolean
+                        reservationAffinity:
+                          items:
+                            properties:
+                              consumeReservationType:
+                                type: string
+                              key:
+                                type: string
+                              values:
+                                items:
+                                  type: string
+                                type: array
+                            required:
+                            - consumeReservationType
+                            type: object
+                          type: array
                         serviceAccount:
                           type: string
                         serviceAccountRef:
@@ -351,6 +390,8 @@ spec:
                                 type: boolean
                             type: object
                           type: array
+                        spot:
+                          type: boolean
                         tags:
                           items:
                             type: string

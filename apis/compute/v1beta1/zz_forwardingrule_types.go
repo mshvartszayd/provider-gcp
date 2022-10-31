@@ -38,6 +38,12 @@ type ForwardingRuleObservation struct {
 	// internally during updates.
 	LabelFingerprint *string `json:"labelFingerprint,omitempty" tf:"label_fingerprint,omitempty"`
 
+	// The PSC connection id of the PSC Forwarding Rule.
+	PscConnectionID *string `json:"pscConnectionId,omitempty" tf:"psc_connection_id,omitempty"`
+
+	// The PSC connection status of the PSC Forwarding Rule. Possible values: STATUS_UNSPECIFIED, PENDING, ACCEPTED, REJECTED, CLOSED
+	PscConnectionStatus *string `json:"pscConnectionStatus,omitempty" tf:"psc_connection_status,omitempty"`
+
 	// The URI of the created resource.
 	SelfLink *string `json:"selfLink,omitempty" tf:"self_link,omitempty"`
 

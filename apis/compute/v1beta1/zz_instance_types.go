@@ -409,7 +409,7 @@ type InstanceParameters struct {
 	// +kubebuilder:validation:Optional
 	ReservationAffinity []ReservationAffinityParameters `json:"reservationAffinity,omitempty" tf:"reservation_affinity,omitempty"`
 
-	// - A list of short names or self_links of resource policies to attach to the instance. Modifying this list will cause the instance to recreate. Currently a max of 1 resource policy is supported.
+	// - A list of self_links of resource policies to attach to the instance. Modifying this list will cause the instance to recreate. Currently a max of 1 resource policy is supported.
 	// +kubebuilder:validation:Optional
 	ResourcePolicies []*string `json:"resourcePolicies,omitempty" tf:"resource_policies,omitempty"`
 
@@ -586,6 +586,10 @@ type SchedulingParameters struct {
 	// Defaults to true.
 	// +kubebuilder:validation:Optional
 	AutomaticRestart *bool `json:"automaticRestart,omitempty" tf:"automatic_restart,omitempty"`
+
+	// Describe the type of termination action for SPOT VM. Can be STOP or DELETE.  Read more on here
+	// +kubebuilder:validation:Optional
+	InstanceTerminationAction *string `json:"instanceTerminationAction,omitempty" tf:"instance_termination_action,omitempty"`
 
 	// The minimum number of virtual CPUs this instance will consume when running on a sole-tenant node.
 	// +kubebuilder:validation:Optional

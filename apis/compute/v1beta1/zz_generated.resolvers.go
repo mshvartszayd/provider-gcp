@@ -1644,6 +1644,53 @@ func (mg *RegionNetworkEndpointGroup) ResolveReferences(ctx context.Context, c c
 		mg.Spec.ForProvider.CloudRun[i3].ServiceRef = rsp.ResolvedReference
 
 	}
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: reference.FromPtrValue(mg.Spec.ForProvider.Network),
+		Extract:      resource.ExtractParamPath("self_link", true),
+		Reference:    mg.Spec.ForProvider.NetworkRef,
+		Selector:     mg.Spec.ForProvider.NetworkSelector,
+		To: reference.To{
+			List:    &NetworkList{},
+			Managed: &Network{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.ForProvider.Network")
+	}
+	mg.Spec.ForProvider.Network = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.ForProvider.NetworkRef = rsp.ResolvedReference
+
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: reference.FromPtrValue(mg.Spec.ForProvider.PscTargetService),
+		Extract:      resource.ExtractParamPath("self_link", true),
+		Reference:    mg.Spec.ForProvider.PscTargetServiceRef,
+		Selector:     mg.Spec.ForProvider.PscTargetServiceSelector,
+		To: reference.To{
+			List:    &ServiceAttachmentList{},
+			Managed: &ServiceAttachment{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.ForProvider.PscTargetService")
+	}
+	mg.Spec.ForProvider.PscTargetService = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.ForProvider.PscTargetServiceRef = rsp.ResolvedReference
+
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: reference.FromPtrValue(mg.Spec.ForProvider.Subnetwork),
+		Extract:      resource.ExtractParamPath("self_link", true),
+		Reference:    mg.Spec.ForProvider.SubnetworkRef,
+		Selector:     mg.Spec.ForProvider.SubnetworkSelector,
+		To: reference.To{
+			List:    &SubnetworkList{},
+			Managed: &Subnetwork{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.ForProvider.Subnetwork")
+	}
+	mg.Spec.ForProvider.Subnetwork = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.ForProvider.SubnetworkRef = rsp.ResolvedReference
 
 	return nil
 }

@@ -115,7 +115,7 @@ type InstanceGroupManagerParameters struct {
 	// +kubebuilder:validation:Optional
 	Project *string `json:"project,omitempty" tf:"project,omitempty"`
 
-	// ) Disks created on the instances that will be preserved on instance delete, update, etc. Structure is documented below. For more information see the official documentation.
+	// Disks created on the instances that will be preserved on instance delete, update, etc. Structure is documented below. For more information see the official documentation.
 	// +kubebuilder:validation:Optional
 	StatefulDisk []StatefulDiskParameters `json:"statefulDisk,omitempty" tf:"stateful_disk,omitempty"`
 
