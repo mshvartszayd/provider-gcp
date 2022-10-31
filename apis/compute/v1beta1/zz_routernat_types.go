@@ -54,8 +54,10 @@ type RouterNATParameters struct {
 	DrainNATIps []*string `json:"drainNatIps,omitempty" tf:"drain_nat_ips,omitempty"`
 
 	// Enable Dynamic Port Allocation.
-	// If minPorts is set, minPortsPerVm must be set to a power of two greater than or equal to 32.
+	// If minPortsPerVm is set, minPortsPerVm must be set to a power of two greater than or equal to 32.
 	// If minPortsPerVm is not set, a minimum of 32 ports will be allocated to a VM from this NAT config.
+	// If maxPortsPerVm is set, maxPortsPerVm must be set to a power of two greater than minPortsPerVm.
+	// If maxPortsPerVm is not set, a maximum of 65536 ports will be allocated to a VM from this NAT config.
 	// Mutually exclusive with enableEndpointIndependentMapping.
 	// +kubebuilder:validation:Optional
 	EnableDynamicPortAllocation *bool `json:"enableDynamicPortAllocation,omitempty" tf:"enable_dynamic_port_allocation,omitempty"`
@@ -73,6 +75,11 @@ type RouterNATParameters struct {
 	// Structure is documented below.
 	// +kubebuilder:validation:Optional
 	LogConfig []RouterNATLogConfigParameters `json:"logConfig,omitempty" tf:"log_config,omitempty"`
+
+	// Maximum number of ports allocated to a VM from this NAT.
+	// This field can only be set when enableDynamicPortAllocation is enabled.
+	// +kubebuilder:validation:Optional
+	MaxPortsPerVM *float64 `json:"maxPortsPerVm,omitempty" tf:"max_ports_per_vm,omitempty"`
 
 	// Minimum number of ports allocated to a VM from this NAT.
 	// +kubebuilder:validation:Optional

@@ -34,6 +34,10 @@ type RegionDiskDiskEncryptionKeyObservation struct {
 
 type RegionDiskDiskEncryptionKeyParameters struct {
 
+	// The name of the encryption key that is stored in Google Cloud KMS.
+	// +kubebuilder:validation:Optional
+	KMSKeyName *string `json:"kmsKeyName,omitempty" tf:"kms_key_name,omitempty"`
+
 	// Specifies a 256-bit customer-supplied encryption key, encoded in
 	// RFC 4648 base64 to either encrypt or decrypt this resource.
 	// Note: This property is sensitive and will not be displayed in the plan.

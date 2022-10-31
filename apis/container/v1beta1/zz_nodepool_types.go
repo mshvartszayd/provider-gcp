@@ -25,19 +25,49 @@ import (
 	v1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
 )
 
+type NodeConfigGuestAcceleratorGpuSharingConfigObservation struct {
+}
+
+type NodeConfigGuestAcceleratorGpuSharingConfigParameters struct {
+
+	// +kubebuilder:validation:Optional
+	GpuSharingStrategy *string `json:"gpuSharingStrategy,omitempty" tf:"gpu_sharing_strategy"`
+
+	// +kubebuilder:validation:Optional
+	MaxSharedClientsPerGpu *float64 `json:"maxSharedClientsPerGpu,omitempty" tf:"max_shared_clients_per_gpu"`
+}
+
 type NodePoolAutoscalingObservation struct {
 }
 
 type NodePoolAutoscalingParameters struct {
 
-	// Maximum number of nodes in the NodePool. Must be >= min_node_count.
-	// +kubebuilder:validation:Required
-	MaxNodeCount *float64 `json:"maxNodeCount" tf:"max_node_count,omitempty"`
+	// Location policy specifies the algorithm used when
+	// scaling-up the node pool. Location policy is supported only in 1.24.1+ clusters.
+	// +kubebuilder:validation:Optional
+	LocationPolicy *string `json:"locationPolicy,omitempty" tf:"location_policy,omitempty"`
 
-	// Minimum number of nodes in the NodePool. Must be >=0 and
-	// <= max_node_count.
-	// +kubebuilder:validation:Required
-	MinNodeCount *float64 `json:"minNodeCount" tf:"min_node_count,omitempty"`
+	// Maximum number of nodes per zone in the NodePool.
+	// Must be >= min_node_count. Cannot be used with total limits.
+	// +kubebuilder:validation:Optional
+	MaxNodeCount *float64 `json:"maxNodeCount,omitempty" tf:"max_node_count,omitempty"`
+
+	// Minimum number of nodes per zone in the NodePool.
+	// Must be >=0 and <= max_node_count. Cannot be used with total limits.
+	// +kubebuilder:validation:Optional
+	MinNodeCount *float64 `json:"minNodeCount,omitempty" tf:"min_node_count,omitempty"`
+
+	// Total maximum number of nodes in the NodePool.
+	// Must be >= total_min_node_count. Cannot be used with per zone limits.
+	// Total size limits are supported only in 1.24.1+ clusters.
+	// +kubebuilder:validation:Optional
+	TotalMaxNodeCount *float64 `json:"totalMaxNodeCount,omitempty" tf:"total_max_node_count,omitempty"`
+
+	// Total minimum number of nodes in the NodePool.
+	// Must be >=0 and <= total_max_node_count. Cannot be used with per zone limits.
+	// Total size limits are supported only in 1.24.1+ clusters.
+	// +kubebuilder:validation:Optional
+	TotalMinNodeCount *float64 `json:"totalMinNodeCount,omitempty" tf:"total_min_node_count,omitempty"`
 }
 
 type NodePoolManagementObservation struct {
@@ -73,6 +103,9 @@ type NodePoolNodeConfigGuestAcceleratorParameters struct {
 
 	// +kubebuilder:validation:Optional
 	GpuPartitionSize *string `json:"gpuPartitionSize,omitempty" tf:"gpu_partition_size"`
+
+	// +kubebuilder:validation:Optional
+	GpuSharingConfig []NodeConfigGuestAcceleratorGpuSharingConfigParameters `json:"gpuSharingConfig,omitempty" tf:"gpu_sharing_config"`
 
 	// The type of the policy. Supports a single value: COMPACT.
 	// Specifying COMPACT placement policy type places node pool's nodes in a closer
@@ -140,6 +173,9 @@ type NodePoolNodeConfigParameters_2 struct {
 	// +kubebuilder:validation:Optional
 	Preemptible *bool `json:"preemptible,omitempty" tf:"preemptible,omitempty"`
 
+	// +kubebuilder:validation:Optional
+	ReservationAffinity []NodePoolNodeConfigReservationAffinityParameters `json:"reservationAffinity,omitempty" tf:"reservation_affinity,omitempty"`
+
 	// +crossplane:generate:reference:type=github.com/upbound/provider-gcp/apis/cloudplatform/v1beta1.ServiceAccount
 	// +crossplane:generate:reference:extractor=github.com/upbound/upjet/pkg/resource.ExtractParamPath("email",true)
 	// +kubebuilder:validation:Optional
@@ -157,6 +193,9 @@ type NodePoolNodeConfigParameters_2 struct {
 	ShieldedInstanceConfig []NodePoolNodeConfigShieldedInstanceConfigParameters `json:"shieldedInstanceConfig,omitempty" tf:"shielded_instance_config,omitempty"`
 
 	// +kubebuilder:validation:Optional
+	Spot *bool `json:"spot,omitempty" tf:"spot,omitempty"`
+
+	// +kubebuilder:validation:Optional
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
 
 	// +kubebuilder:validation:Optional
@@ -164,6 +203,21 @@ type NodePoolNodeConfigParameters_2 struct {
 
 	// +kubebuilder:validation:Optional
 	WorkloadMetadataConfig []NodePoolNodeConfigWorkloadMetadataConfigParameters `json:"workloadMetadataConfig,omitempty" tf:"workload_metadata_config,omitempty"`
+}
+
+type NodePoolNodeConfigReservationAffinityObservation struct {
+}
+
+type NodePoolNodeConfigReservationAffinityParameters struct {
+
+	// +kubebuilder:validation:Required
+	ConsumeReservationType *string `json:"consumeReservationType" tf:"consume_reservation_type,omitempty"`
+
+	// +kubebuilder:validation:Optional
+	Key *string `json:"key,omitempty" tf:"key,omitempty"`
+
+	// +kubebuilder:validation:Optional
+	Values []*string `json:"values,omitempty" tf:"values,omitempty"`
 }
 
 type NodePoolNodeConfigShieldedInstanceConfigObservation struct {

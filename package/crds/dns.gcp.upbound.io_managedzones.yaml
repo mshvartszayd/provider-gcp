@@ -64,6 +64,19 @@ spec:
                 type: string
               forProvider:
                 properties:
+                  cloudLoggingConfig:
+                    description: Cloud logging configuration Structure is documented
+                      below.
+                    items:
+                      properties:
+                        enableLogging:
+                          description: If set, enable query logging for this ManagedZone.
+                            False by default, making logging opt-in.
+                          type: boolean
+                      required:
+                      - enableLogging
+                      type: object
+                    type: array
                   description:
                     description: A textual description field.
                     type: string
@@ -564,9 +577,17 @@ spec:
             properties:
               atProvider:
                 properties:
+                  creationTime:
+                    description: The time that this resource was created on the server.
+                      This is in RFC3339 text format.
+                    type: string
                   id:
                     description: an identifier for the resource with format projects/{{project}}/managedZones/{{name}}
                     type: string
+                  managedZoneId:
+                    description: Unique identifier for the resource; defined by the
+                      server.
+                    type: number
                   nameServers:
                     description: Delegate your managed_zone to these virtual name
                       servers; defined by the server

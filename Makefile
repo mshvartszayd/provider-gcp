@@ -4,9 +4,9 @@
 PROJECT_NAME := provider-gcp
 PROJECT_REPO := github.com/upbound/$(PROJECT_NAME)
 
-export TERRAFORM_VERSION := 1.2.1
+export TERRAFORM_VERSION := 1.3.3
 export TERRAFORM_PROVIDER_SOURCE := hashicorp/google
-export TERRAFORM_PROVIDER_VERSION := 4.22.0
+export TERRAFORM_PROVIDER_VERSION := 4.41.0
 export TERRAFORM_PROVIDER_DOWNLOAD_NAME := terraform-provider-google
 export TERRAFORM_PROVIDER_DOWNLOAD_URL_PREFIX := https://releases.hashicorp.com/terraform-provider-google/$(TERRAFORM_PROVIDER_VERSION)
 export TERRAFORM_PROVIDER_REPO ?= https://github.com/hashicorp/terraform-provider-google

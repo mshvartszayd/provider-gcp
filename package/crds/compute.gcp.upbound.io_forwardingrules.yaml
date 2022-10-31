@@ -776,6 +776,14 @@ spec:
                     description: (Beta) The fingerprint used for optimistic locking
                       of this resource.  Used internally during updates.
                     type: string
+                  pscConnectionId:
+                    description: The PSC connection id of the PSC Forwarding Rule.
+                    type: string
+                  pscConnectionStatus:
+                    description: 'The PSC connection status of the PSC Forwarding
+                      Rule. Possible values: STATUS_UNSPECIFIED, PENDING, ACCEPTED,
+                      REJECTED, CLOSED'
+                    type: string
                   selfLink:
                     description: The URI of the created resource.
                     type: string

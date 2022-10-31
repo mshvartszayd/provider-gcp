@@ -25,6 +25,16 @@ import (
 	v1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
 )
 
+type CloudLoggingConfigObservation struct {
+}
+
+type CloudLoggingConfigParameters struct {
+
+	// If set, enable query logging for this ManagedZone. False by default, making logging opt-in.
+	// +kubebuilder:validation:Required
+	EnableLogging *bool `json:"enableLogging" tf:"enable_logging,omitempty"`
+}
+
 type DNSSECConfigObservation struct {
 }
 
@@ -98,8 +108,15 @@ type ForwardingConfigParameters struct {
 
 type ManagedZoneObservation struct {
 
+	// The time that this resource was created on the server.
+	// This is in RFC3339 text format.
+	CreationTime *string `json:"creationTime,omitempty" tf:"creation_time,omitempty"`
+
 	// an identifier for the resource with format projects/{{project}}/managedZones/{{name}}
 	ID *string `json:"id,omitempty" tf:"id,omitempty"`
+
+	// Unique identifier for the resource; defined by the server.
+	ManagedZoneID *float64 `json:"managedZoneId,omitempty" tf:"managed_zone_id,omitempty"`
 
 	// Delegate your managed_zone to these virtual name servers;
 	// defined by the server
@@ -107,6 +124,11 @@ type ManagedZoneObservation struct {
 }
 
 type ManagedZoneParameters struct {
+
+	// Cloud logging configuration
+	// Structure is documented below.
+	// +kubebuilder:validation:Optional
+	CloudLoggingConfig []CloudLoggingConfigParameters `json:"cloudLoggingConfig,omitempty" tf:"cloud_logging_config,omitempty"`
 
 	// The DNS name of this managed zone, for instance "example.com.".
 	// +kubebuilder:validation:Required

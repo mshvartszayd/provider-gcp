@@ -9,6 +9,13 @@ import (
 )
 
 var externalNameConfigs = map[string]config.ExternalName{
+	// artifactregistry
+	//
+	// Imported by using the following format: projects/{{project}}/locations/{{region}}/repositories/{{name}}
+	"google_artifact_registry_repository": config.TemplatedStringAsIdentifier("name", "projects/{{ .setup.configuration.project }}/locations/{{ .parameters.region }}/repositories/{{ .external_name }}"),
+	// Imported by using the following format: projects/{{project}}/locations/{{location}}/repositories/{{repository}} roles/artifactregistry.reader user:jane@example.com
+	"google_artifact_registry_repository_iam_member": config.IdentifierFromProvider,
+
 	// appengine
 	//
 	// Imported by using the following format: your-project-id

@@ -441,6 +441,8 @@ spec:
                       properties:
                         automaticRestart:
                           type: boolean
+                        instanceTerminationAction:
+                          type: string
                         minNodeCpus:
                           type: number
                         nodeAffinities:

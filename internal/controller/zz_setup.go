@@ -10,6 +10,8 @@ import (
 	"github.com/upbound/upjet/pkg/controller"
 
 	application "github.com/upbound/provider-gcp/internal/controller/appengine/application"
+	registryrepository "github.com/upbound/provider-gcp/internal/controller/artifact/registryrepository"
+	registryrepositoryiammember "github.com/upbound/provider-gcp/internal/controller/artifact/registryrepositoryiammember"
 	function "github.com/upbound/provider-gcp/internal/controller/cloudfunctions/function"
 	functioniammember "github.com/upbound/provider-gcp/internal/controller/cloudfunctions/functioniammember"
 	folder "github.com/upbound/provider-gcp/internal/controller/cloudplatform/folder"
@@ -214,6 +216,8 @@ import (
 func Setup(mgr ctrl.Manager, o controller.Options) error {
 	for _, setup := range []func(ctrl.Manager, controller.Options) error{
 		application.Setup,
+		registryrepository.Setup,
+		registryrepositoryiammember.Setup,
 		function.Setup,
 		functioniammember.Setup,
 		folder.Setup,
